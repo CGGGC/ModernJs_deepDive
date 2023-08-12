@@ -101,6 +101,127 @@ switch (month) {
 
 console.log(days); // 29
 ```
+<br>
 
+# 반복문
 
+> 💡 반복문(loop statement)은 `조건식의 평가 결과가 참`인 경우 `코드 블록을 반복 실행`한다. 이는 조건이 거짓일 때 까지 반복된다.
+<br>
 
+## for문
+
+> 💡 for 문은 `조건식이 거짓으로 평가될 때까지` 코드 블록을 반복 실행한다.
+>> `for 문`은 `반복 횟수가 명확할 때 사용`한다.
+
+```js
+
+// 일반적으로 사용되는 for 문
+for (변수 선언문 또는 할당문; 조건식; 증감식) {
+  조건식이 참인 경우 반복 실행될 문;
+}
+
+// 무한루프 for 문
+for(;;) { ... }
+
+// 중첩 for 문
+for (;;) {
+  for (;;) {
+    if () console.log();
+  }
+}
+```
+
+## while 문
+
+> 💡 while 문은 주어진 `조건식의 평가 결과가 참`이면 코드 블록을 계속해서 반복 실행한다.
+>> `while 문`은 `반복 횟수가 불명확할 때 사용`한다.
+
+```js
+
+// 일반적으로 사용되는 while 문
+var count = 0;
+
+while (count < 3) {
+  console.log(count); // 0 1 2
+  count++;
+}
+
+// 무한루프 while 문
+while (true) { ... }
+```
+
+## do while 문
+
+> 💡 `do ... while 문`은 `코드 블록을 먼저 실행하고 조건식을 평가`하기 때문에 코드 블록이 무조건 한 번 이상 실행된다.
+
+```js
+var count = 0;
+
+do {
+  console.log(count); // 0 1 2
+  count++;
+} while (count < 3);
+```
+<br>
+
+# break 문
+
+> 💡 `break 문`은 `코드 블록을 탈출`한다.
+>> 더 정확히는 레이블 문, 반복문(for, for ... in, for ... of, while, do ... while) 또는 switch 문의 코드 블록을 탈출.
+
+```
+🔎 Note
+
+레이블 문(label statement)이란 식별자가 붙은 문을 말한다.
+
+// foo 라는 레이블 식별자가 붙은 레이블 문
+foo: console.log('foo');
+
+// foo 라는 식별자가 붙은 레이블 블록문
+foo: {
+  console.log(1);
+  break foo; // foo 레이블 블록문을 탈출한다.
+  console.log(2);
+}
+```
+
+- 그러나 레이블 문은 `중첩된 for 문 외부로 탈출할 때 유용`하지만, `그 밖의 경우`에는 일반적으로 `권장하지 않는다.`
+  - `프로그램의 흐름이 복잡`해지며, `가독성이 나빠`지고, `오류를 발생시킬 가능성`이 높아지기 때문.
+<br>
+
+# continue 문
+
+> 💡 continue 문은 반복문의 `코드 블록 실행을 현 지점에서 중단`하고, `반복문의 증감식으로 실행 흐름을 이동`시킨다.
+>> break 문 처럼 반복문을 탈출하지는 않는다.
+
+- `if 문 내`에서 `실행해야 할 코드가 한 줄이라면,` `continue 문을 사용하지 않는 것`이 가독성이 더 좋다.
+  - 하지만 `if 문 내`에서 `실행해야 할 코드가 길다면,` 들여쓰기가 한 단계 더 깊어지므로 `continue 문을 사용하는 편`이 가독성이 더 좋다.
+
+```js
+
+varr string = 'Hello World.';
+var search = 'l';
+var count = 0;
+
+// continue 문을 사용하지 않으면 if 문 내에 코드를 작성해야 한다.
+for (var i = 0; i < string.length; i++) {
+  // 'l' 이면 카운트를 증가시킨다.
+  if (string[i] === search) {
+    count++;
+    // code
+    // code
+    // code
+  }
+}
+
+// continue 문을 사용하면 if 문 밖에 코드를 작성할 수 있다.
+for (var i = 0; i < string.length; i++) {
+  // 'l' 이 아니면 카운트를 증가시키지 않는다.
+  if (string[i] !== search) continue;
+
+  count++;
+  // code
+  // code
+  // code
+}
+```
