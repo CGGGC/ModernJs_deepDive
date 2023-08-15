@@ -295,7 +295,7 @@ Boolean([]);              // → true
 
 <br>
 
-## 논리 연산자를 사용한 단축 평가
+## 1️⃣ 논리 연산자를 사용한 단축 평가
 
 > `논리곱(&&) 연산자`는 `두 개의 피연산자가 모두 true로 평가`될 때 `true를 반환`한다.
 
@@ -394,9 +394,77 @@ getStringLength('hi');  // → 2
 ```
 <br>
 
-## 옵셔널 체이닝 연산자
+## 2️⃣ 옵셔널 체이닝 연산자
+
+> 💡 `옵셔널 체이닝(optional chaining) 연산자 ?.`는 `좌항의 피연산자`가 `null 또는 undefined인 경우 undefined를 반환`하고,
+`그렇지 않으면 우항의 프로퍼티 참조`를 이어간다.
+>> 이는` 객체를 가리키기를 기대하는 변수`가 `null 또는 undefined가 아닌지 확인`하고 `프로퍼티를 참조할 때 유용`하다.
 <br>
 
-## null 병합 연산자
+```js
 
+//ES11(ECMAScript2020)에서 도입
+var elem = null;
 
+// elem이 null 또는 undefined이면 undefined를 반환하고, 그렇지 않으면 우항의 프로퍼티 참조를 이어간다.
+var value = elem?.value;
+console.log(value); // undefined
+
+```
+<br>
+
+### 옵셔널 체이닝 연산자가 도입되기 이전
+
+> `도입되기 이전`에는 `논리 연산자 &&`를 사용한 `단축 평가를 통해 확인`했다.
+
+```js
+
+// elem이 Falsy 값이면 elem으로 평가되고, elem이 Truthy 값이면 elem.value로 평가된다.
+var value = elem && elem.value;
+console.log(value); // null
+
+```
+<br>
+
+> 그러나 `우항의 프로퍼티를 참조하지 못하는 경우`도 있었다.
+
+```js
+
+var str = '';
+
+// 문자열의 길이(length)를 참조한다.
+var length = str && str.length;
+
+// 문자열의 길이(length)를 참조하지 못한다.
+console.log(length); // ''
+
+```
+<br>
+
+## 3️⃣ null 병합 연산자
+
+> 💡 `null 병합(nullish coalescing) 연산자 ??`는 `좌항의 피연산자가 null 또는 undefined인 경우` `우항의 피연산자를 반환`하고,
+`그렇지 않으면 좌항의 피연산자를 반환`한다.
+>> 이는 `변수에 기본값을 설정할 때 유용`하다.
+
+```js
+
+// E11(ECMAScript2020)에서 도입
+var foo = null ?? 'default string';
+console.log(foo); // "default string"
+
+```
+<br>
+
+### null 병합 연산자가 도입되기 이전
+
+> `도입되기 이전`에는 `논리연산자 ||`를 사용한 `단축 평가를 통해 변수에 기본값을 설정`했다.
+
+> 그러나 평가되는 Falsy 값의 다양성으로 인해 `예기치 않은 동작이 발생할 수도 있다.`
+
+```js
+
+// Falsy 값인 0이나 ''도 기본값으로서 유효하다면 예기지 않은 동작이 발생할 수 있다.
+var foo = '' || 'default string';
+console.log(foo); // "default string"
+```
