@@ -148,25 +148,159 @@ console.log(person['last-name']); // Lee
 <br>
 
 # 프로퍼티 값 갱신
+
+> 💡 `이미 존재하는 프로퍼티에 값을 할당`하면 `프로퍼티 값이 갱신`된다.
+
+```js
+
+var person = {
+  name: 'Lee'
+};
+
+// person 객체에 name 프로퍼티가 존재하므로 name 프로퍼티의 값이 갱신된다.
+person.name = 'Kim';
+
+console.log(person); // {nam: "Kim"}
+
+```
 <br>
 
 # 프로퍼티 동적 생성
+
+> 💡 `존재하지 않는 프로퍼티에 값을 할당`하면 프로퍼티가 동적으로 생성되어 추가되고 `프로퍼티 값이 할당`된다.
+
+```js
+
+var person = {
+  name: 'Lee'
+};
+
+// person 객체에는 age 프로퍼티가 존재하지 않는다.
+// 따라서 person 객체에 age 프로퍼티가 동적으로 생성되고 값이 할당된다.
+person.age = 20;
+
+console.log(person); // {name: "Lee", age: 20}
+
+```
 <br>
 
 # 프로퍼티 삭제
+
+> 💡 `delete 연산자는 객체의 프로퍼티를 삭제`한다.
+>> 이때, delete 연산자의 피연산자는 프로퍼티 값에 접근할 수 있는 표현식이어야 한다.
+
+```js
+
+var person = {
+  name: 'Lee'
+};
+
+// 프로퍼티 동적 생성
+person.age = 20;
+
+// person 객체에 age 프로퍼티가 존재하므로 delete 연산자로 age 프로퍼티 삭제
+delete person.age;
+
+// person 객체에 address 프로퍼티가 존재하지 않아도 에러가 발생하지 않는다.
+delete person.address;
+
+console.log(person); // {name: "Lee"}
+
+```
 <br>
 
 # ES6에서 추가된 객체 리터럴의 확장 기능
 <br>
 
 ## 1️⃣ 프로퍼티 축약 표현
+
+```js
+
+// ES5
+var x = 1, y = 2;
+
+var obj = {
+  x: x,
+  y: y
+};
+
+console.log(obj); // {x: 1, y: 2}
+
+
+// ES6
+// ES6에서는 프로퍼티 값을 변수로 사용하는 경우 변수 이름과 프로퍼티 키가 동일한 이름일 때
+// 프로퍼티 키를 생략할 수 있다.
+// 이때 프로퍼티 키는 변수 이름으로 자동 생성된다.
+let x = 1, y = 2;
+
+// 프로퍼티 축약표현
+const obj = { x, y };
+
+console.log(obj); // { x: 1, y: 2}
+
+```
 <br>
 
 ## 2️⃣  계산된 프로퍼티 이름
+
+```js
+
+// ES5
+var prefix = 'prop';
+var i = 0;
+
+var obj = {};
+
+// 계산된 프로퍼티 이름으로 프로퍼티 키 동적 생성
+obj[prefix + '-' + ++i] = i;
+obj[prefix + '-' + ++i] = i;
+obj[prefix + '-' + ++i] = i;
+
+console.log(obj); // {prop-1: 1, prop-2: 2, prop-3: 3}
+
+
+// ES6
+// ES6에서는 객체 리터럴 내부에서도 계산된 프로퍼티 이름으로 프로퍼티 키를 동적생성 할 수 있다.
+const prefix = 'prop';
+let i = 0;
+
+// 객체 리터럴 내부에서 계산된 프로퍼티 이름으로 프로퍼티 키를 동적 생성
+const obj = {
+  [`${prefix}-${++i}`]: i,
+  [`${prefix}-${++i}`]: i,
+  [`${prefix}-${++i}`]: i
+};
+
+console.log(obj); // {prop-1: 1, prop-2: 2, prop-3: 3}
+
+```
 <br>
 
 ## 3️⃣ 메서드 축약 표현
 
+```js
+
+// ES5
+var obj = {
+  name: 'Lee',
+  sayHi: function() {
+    console.log('Hi! ' + this.name);
+  }
+};
+
+obj.sayHi(); // Hi! Lee
 
 
+// ES6
+// ES6에서는 메서드를 정의할 때 function 키워드를 생략한 축약 표현을 사용할 수 있다.
+const obj = {
+  name: 'Lee',
+  // 메서드 축약 표현
+  sayHi() {
+    console.log('Hi! ' + this.name);
+  }
+};
 
+obj.sayHi(); // Hi! Lee
+
+```
