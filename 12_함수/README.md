@@ -183,7 +183,7 @@ bar(); // ReferenceError: bar is not defined
   - 함수 몸체 외부에서 함수 이름으로 함수를 참조할 수 없으므로 함수 몸체 외부에서는 함수 이름으로 함수를 호출할 수 없다
   - 즉, **함수를 가리키는 식별자가 없다**는 것이다.
 
-<img src="bar.png" width="70%>
+<img src="bar.png" width="70%">
 <br>
 
 ```js
@@ -200,7 +200,7 @@ foo(); // foo
   - foo는 **자바스크립트 엔진이 암묵적으로 생성한 식별자**이기 때문에 호출할 수 있는 것이다.
 <br>
 
-<img src="foo.png" width="70%>
+<img src="foo.png" width="70%">
 
 
 
