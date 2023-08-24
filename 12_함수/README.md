@@ -249,17 +249,181 @@ console.log(foo(2, 5)); // ReferenceError: foo is not defined
 
 ⭐️ 함수 선언문 → "표현식이 아닌 문" & 함수 표현식 → "표현식인 문"
 <br>
+<br>
 
 ### 함수 선언문과 함수 표현식의 차이점
 <br>
 
+```js
+
+// 함수 호출
+console.log(add(2, 5)); // 7
+console.log(sub(2, 5)); // TypeError: sub is not function
+
+
+//함수 선언문
+function add(x, y) {
+  return x + y;
+}
+
+// 함수 표현식
+var sub = function (x, y) {
+  return x - y;
+};
+
+```
+
+- **함수 선언문으로 정의한 함수** : 함수 선언문 이전에 호출할 수 있다.
+- **함수 표현식으로 정의한 함수** : 함수 표현식 이전에 호출할 수 없다.
+<br>
+
+```js
+🔎 Note
+
+[함수의 생성 시점 차이]
+
+- "함수 선언문"
+
+함수 선언문의 경우 코드가 한 줄씩 실행되는 시점인 "런타임(runtime)이전에 실행"된다.
+
+이는 "런타임 이전에 함수 객체가 먼저 생성"되며,
+동일한 이름의 "식별자를 생성과 동시에 생성된 함수 객체를 할당"한다.
+
+따라서, 함수 선언문이 코드의 선두로 끌어 올려진 것처럼 동작하는 자바스크립트 고유의 특징인
+"함수 호이스팅(function hoisting)"이 발생한 것이다.
+
+
+- "함수 표현식"
+
+함수 표현식의 경우 변수에 할당되는 값이 "함수 리터럴인 문"이다.
+
+따라서 "함수 표현식은 변수 선언과 동일하게 작동"하며,
+변수 선언은 런타임 이전에 실행되어 undefined로 초기화 된다.
+
+이 변수 할당문의 값은 할당문이 실행되는 시점, 즉 "런타임에 평가"되므로
+함수 표현식의 함수 리터럴도 "할당문이 실행되는 시점에 평가"되어 함수 객체가 된다.
+
+결론적으로, "함수 표현식은 변수 호이스팅이 발생"하는 것이다!
+```
+<br>
+
 ## 3️⃣ Function 생성자 함수
+
+```js
+
+var add = new Function('x', 'y', 'return x + y');
+
+console.log(add(2, 5); // 7
+
+```
 <br>
 
 ## 4️⃣ 화살표 함수
+
+```js
+
+const add = (x, y) => x + y;
+console.log(add(2, 5)); // 7
+
+```
 <br>
 
 # 함수 호출
+
+> 💡 함수는 함수를 가리키는 식별자와 한 쌍의 소괄호인 함수 호출 연산자로 호출한다.
+>> 함수 호출시 현재 실행 흐름을 중단하고 호출된 함수로 실행 흐름을 옮긴다.
+<br>
+
+## 1️⃣ 매개변수와 인수
+
+> 💡 `매개변수(parameter)` : `함수 몸체 내부에서 변수와 동일하게 취급`되며,
+일반 변수와 마찬가지로 undefined로 초기화 된 후 인수가 순서대로 할당된다.
+>> 매개변수의 `스코프(유효 범위)는 함수 내부`다.
+
+> 💡 `인수(argument)` : `값으로 평가될 수 있는 표현식`이어야 하며, 함수를 호출할 때 지정하고 `개수와 타입에는 제한이 없다.`
+<br>
+
+```js
+
+// 함수 선언문
+function add(x, y) {      // (x, y) → 매개변수(인수를 전달받는다)
+  return x + y;           // x + y; → 반환값
+}
+
+// 함수 호출
+var result = add(2, 5);   // result → x + y 반환, (2, 5) → 인수
+
+// 함수의 매개변수는 함수 몸체 내부에서만 참조할 수 있다.
+console.log(x, y); // ReferenceError: x is not defined
+
+
+// 인수가 부족해서 인수가 할당되지 않은 매개변수의 값은 undefined
+// 2 + undefined → NaN
+console.log(add(2)); // NaN
+
+// 인수가 초과된 경우 초과된 인수는 무시된다.
+console.log(add(2, 5, 10)); // 7
+
+// 사실 함수의 arguments에 보관된다!
+console.log(arguments); // Arguments(3) [2, 5, 10]
+
+```
+<br>
+
+## 2️⃣ 인수를 전달할 때 생기는 문제점
+
+```js
+🔎 Note
+
+1️⃣ 자바스크립트 함수는 매개변수와 인수의 개수가 일치하는지 확인하지 않는다.
+2️⃣ 자바스크립트는 동적 타입 언어다.
+   따라서, 자바스크립트 함수는 매개변수의 타입을 사전에 지정할 수 없다.
+
+즉, 자바스크립트의 경우 함수를 정의할 때 적절한 인수가 전달되었는지 확인할 필요가 있다!
+```
+<br>
+
+```js
+
+// "타입스크립트"와 같은 정적 타입을 선언한다.
+function add(x, y) {
+  if (typeof x !== 'number' || typeof y !== 'number') {
+  // 매개변수를 통해 전달된 인수의 타입이 부적절한 경우 에러를 발생시킨다.
+  throw new TypeError('인수는 모두 숫자 값이어야 합니다.');
+  }
+
+  return x + y;
+}
+
+console.log(add(2));          // TypeError: 인수는 모두 숫자 값이어야 합니다.
+console.log(add('a', 'b'));   // TypeError: 인수는 모두 숫자 값이어야 합니다.
+
+
+// "단축평가와 arguments 객체"를 통해 인수를 확인한다.
+function add(a, b, c) {
+  a = a || 0;
+  b = b || 0;
+  c = c || 0;
+  return a + b + c;
+}
+
+console.log(add(1, 2, 3)); // 6
+console.log(add(1, 2)); // 3
+console.log(add(1)); // 1
+console.log(add()); // 0
+
+
+// "매개변수 기본값 설정"으로 인수 체크 및 초기화 진행
+function add(a = 0, b = 0, c = 0) {
+  return a + b + c;
+}
+
+console.log(add(1, 2, 3)); // 6
+console.log(add(1, 2)); // 3
+console.log(add(1)); // 1
+console.log(add()); // 0
+
+```
 <br>
 
 # 참조에 의한 전달과 외부 상태의 변경
