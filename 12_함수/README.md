@@ -427,7 +427,236 @@ console.log(add()); // 0
 <br>
 
 # 참조에 의한 전달과 외부 상태의 변경
+
+> 💡 매개변수에 값을 전달하는 방식은 `값에 의한 호출(call by value),` `참조에 의한 호출(call by reference)`로 구별한다.
+>> 그러나 동작 방식은 값에 의한 전달, 참조에 의한 전달과 동일하다.
+<br>
+
+```js
+
+// 매개변수 primitive는 원시 값을 전달받고, 매개변수 obj는 객체를 전달받는다.
+function changeVal(primitive, obj) {
+  primitive += 100;
+  obj.name = 'Kim';
+}
+
+// 외부 상태
+var num = 100;
+var person = { name: 'Lee' };
+
+console.log(num); // 100
+console.log(person); // {name: "Lee"}
+
+// 원시 값은 값 자체가 전달되어 복사되고
+// 객체는 참조 값이 복사되어 전달된다.
+changeVal(num, person);
+
+// 원시 값은 원본이 훼손되지 않는다.
+console.log(num); // 100
+
+// 객체는 원본이 훼손된다.
+console.log(person; // {name: "Kim"}
+
+```
+<br>
+
+```js
+🔎 Note
+
+[함수 내부에서 수정한 외부 객체]
+
+"원시 타입의 인수는 값 자체가 복사"되어 매개변수에 전달되기 때문에
+함수 몸체에서 그 값을 변경(재할당을 통한 교체)해도 원본은 훼손되지 않는다.
+
+즉, "어떠한 부수 효과도 발생하지 않는다."
+
+
+그러나 "객체 타입의 인수는 참조 값이 복사"되어 매개변수에 전달되기 때문에
+함수 몸체에서 참조 값을 통해 객체를 변경할 경우 원본이 훼손된다.
+
+즉, 함수 몸체 내부로 전달한 참조값에 의해 "원본 객체가 변경되는 부수 효과가 발생한다."
+```
+<br>
+
+- 함수가 외부 상태를 변경하면 `상태 변화를 추적하기 어려워진다.`
+  - 1️⃣ 코드의 복잡성을 증가시키고
+  - 2️⃣ 가독성을 해치는 원인이 된다.
+ 
++ `해결방법` 중 하나는 `객체를 불변 객체(immutable object)로 만들어 사용`하는 것.
+  + 깊은 복사(deep copy)를 통해 새로운 객체를 생성하고, 재할당을 통해 교체한다.
 <br>
 
 # 다양한 함수의 형태
 <br>
+
+## 1️⃣ 즉시 실행 함수
+
+> 즉시 실행 함수(Immediately Invoked Function Expression) : 함수 정의와 동시에 즉시 호출되는 함수
+<br>
+
+```js
+
+// 익명 즉시 실행 함수
+(function () {
+  var a = 3;
+  var b = 5;
+  return a * b;
+}());
+
+// 기명 즉시 실행 함수
+(function foo() {
+  var a = 3;
+  var b = 5;
+}());
+
+// 함수 리터럴로 평가
+foo(); // ReferenceError: foo is not defined
+
+
+// 자바스크립트 엔진이 암묵적으로 함수 선언문이 끝나는 위치에 세미콜론을 추가한다.
+// 그렇기 때문에 즉시 실행 함수는 그룹 연산자( ... )로 감싸야 한다.
+function () {  // SyntaxError: Function statements require a function name
+  // ...
+}();
+
+```
+<br>
+
+## 2️⃣ 재귀 함수
+
+> 재귀 함수(recursive function) : 자기 자신을 호출 하는 행위, 즉 재귀 호출을 수행하는 함수
+>> `함수 몸체 내부에서 호출`하기 때문에, `함수 이름을 사용해 호출`할 수 있다.
+
+>> 만약 탈출 조건을 만들지 않으면 함수가 무한 호출되어 `스택 오버플로(stack overflow)에러가 발생`한다.
+<br>
+
+```js
+
+// 재귀 함수를 사용하면 반복되는 처리를 반복문 없이 구현할 수 있다.
+function factorial(n) {
+  // 탈출 조건 : na이 1 이하일 때 재귀 호출을 멈춘다.
+  if (n <= 1) return 1;
+  // 재귀 호출
+  return n * factorial(n-1);
+}
+
+console.log(factorial(0)); // 0! = 1
+console.log(factorial(5)); // 5! = 5 * 4 * 3 * 2 * 1 = 120
+
+```
+<br>
+
+## 3️⃣ 중첩 함수 & 외부 함수
+
+> `중첩 함수(nested function) 또는 내부 함수(inner functino)` : 함수 내부에 정의된 함수
+>> 헬퍼 함수(helper function) : 중첩 함수가 자신을 포함하는 외부 함수의 역할을 도움
+
+> `외부 함수(outer function)` : 중첩 함수를 포함하는 외부 함수
+<br>
+
+```js
+
+function outer() {
+  var x = 1;
+
+  // 중첩 함수
+  fucntion inner() {
+    var y - 2;
+    // 외부 함수의 변수를 참조할 수 있다.
+    console.log(x + y); // 3
+  }
+
+  inner();
+}
+
+outer();
+
+```
+<br>
+
+## 4️⃣ 콜백 함수 & 고차 함수
+
+> `콜백 함수(callback function)` : 함수의 매개변수를 통해 다른 함수의 내부로 전달되는 함수
+
+> `고차 함수(Higher-Order function)` : 매개변수를 통해 함수의 외부에서 콜백 함수를 전달받은 함수
+>> 고차 함수는 콜백 함수를 `자신의 일부분으로 합성`
+<br>
+
+```js
+
+// [변하지 않는 공통 로직]
+// 외부에서 전달받은 f를 n만큼 반복 호출
+function repeat(n, f) {
+  for (var i = 0; i < n; i++) {
+    f(i); // i를 전달하면서 f를 호출
+  }
+}
+
+// [경우에 따라 변경되는 로직]
+var logAll = function (i) {
+  console.log(i);
+};
+
+// 반복 호출할 함수를 인수로 전달한다.
+repeat(5, logAll); // 0 1 2 3 4
+
+// [경우에 따라 변경되는 로직]
+var logOdds = function (i) {
+  if (i % 2) console.log(i);
+};
+
+// 반복 호출할 함수를 인수로 전달한다.
+repeat(5, logOdds); // 1 3
+
+```
+<br>
+
+- `콜백 함수는 고차 함수에 의해 호출`되며, 이때 고차 함수는 필요에 따라 콜백 함수에 인수를 전달할 수 있다.
+  - **고차 함수에 콜백 함수를 전달할 때** 콜백 함수를 호출하지 않고 **함수 자체를 전달**해야 한다.
+<br>
+
+## 5️⃣ 순수 함수와 비순수 함수
+
+> `순수 함수(pure function)` : 부수 효과가 없는 함수
+>> 어떤 외부 상태에도 의존하지 않으며, 외부 상태를 변경하지도 않는 함수
+
+>> 함수 내부 상태에만 의존한다 해도 내부 상태가 호출할 때 마다 변화하면 순수 함수가 아니다.(ex: 현재 시간)
+
+
+> `비순수 함수(impure function)` : 부수 효과가 있는 함수
+>> 외부 상태에 의존하거나 외부 상태를 변경
+<br>
+
+```js
+
+// [순수 함수]
+var count = 0; // 현재 가운트를 나타내는 상태
+
+// 순수 함수 increase는 동일한 인수가 전달되면 언제나 동일한 값을 반환한다.
+function increase(n) {
+  return ++n;
+}
+
+// 순수 함수가 반환한 결과값을 변수에 재할당해서 상태를 변경
+count = increase(count);
+console.log(count); // 1
+
+count = increase(count);
+console.log(count); // 2
+
+
+// [비순수 함수]
+var count = 0; // 현재 카운트를 나타내는 상태: increase 함수에 의해 변화한다.
+
+function increase() {
+  return ++count;  // 외부 상태에 의존하며 외부 상태를 변경한다.
+}
+
+// 비순수 함수는 외부 상태(count)를 변경하므로 상태 변화를 추적하기 어려워진다.
+increase();
+console.log(count); // 1
+
+increase();
+console.log(count); // 2
+
+```
