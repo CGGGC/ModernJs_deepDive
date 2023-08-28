@@ -97,7 +97,7 @@ console.log(y); // 8. ReferenceError: z is not defined
 ```
 <br>
 
-<img src="scope chain.png" width="70%">
+<img src="scope chain.png" width="27%">
 <br>
 
 ```js
