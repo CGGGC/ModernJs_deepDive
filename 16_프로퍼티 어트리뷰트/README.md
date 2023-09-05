@@ -205,18 +205,149 @@ Object.getOwnPropertyDescriptor(function() {}, 'prototype');
 <br>
 
 # 프로퍼티 정의
+
+> 💡 `프로퍼티 정의` : `새로운 프로퍼티를 추가하면서` 프로퍼티 어트리뷰트를 `명시적으로 정의` & 기존 프로퍼티의 프로퍼티 어트리뷰트를 `재정의`
+>> ex) 프로퍼티 값을 갱신 가능하도록 할 지 정의
+<br>
+
+```js
+
+const person = {};
+
+// 데이터 프로퍼티 정의
+Object.defineProperty(person, 'fristName', {
+  value: 'CG',
+  writable: true,
+  enumerable: true,
+  configurable: true
+});
+
+Object.defineProperty(person, 'lastName', {
+  value: 'Lee'
+});
+
+let descriptor = Object.getOwnPropertyDescriptor(person, 'fistName');
+console.log('firstName', descriptor);
+// fristName {value: "CG", writable: true, enumerable: true, configurable: true}
+
+// 디스크립터 객체의 프로퍼티를 누락시키면 undefined, false가 기본값이다.
+descriptor = Object.getOwnPropertyDescriptor(person, 'lastName');
+console.log('lastName', descriptor);
+// lastName {value: "Lee", writable: false, enumerable: false, configurable: false}
+
+[기본 값이 false 일 때]
+
+- [[Enmerable]]의 값이 false인 경우
+  해당 프로퍼티는 for ... in 문이나 Object.keys 등으로 열거할 수 없다.
+
+- [[Writable]]의 값이 false 인 경우
+  해당 프로퍼티는 [[Value]]의 값을 변경할 수 없다.
+
+- [[Configurable]]의 값이 false 인 경우
+  해당 프로퍼티를 삭제할 수 없으며 재정의할 수 없다.
+  또한, 프로퍼티를 삭제하면 에러는 발생하지 않고 무시된다.
+
+
+// 접근자 프로퍼티 정의
+Obejct.definedProperty(person, 'fullName', {
+  // getter 함수
+  get() {
+    return `${this.firstName} ${this.lastName}`;
+  },
+  // setter 함수
+  set(name) {
+    [this.firstName, this.lastName] = name.split(' ');
+  },
+  enumerable: true,
+  configurable: true
+});
+
+descriptor = Object.getOwnPropertyDescriptor(person, 'fullName');
+console.log('fullName', descriptor);
+// fullName {get: f, set: f, enumerable: true, configurable: true}
+
+person.fullName = 'CG Lee';
+console.log(person); // {firstName: "CG", lastName: "Lee"}
+
+
+[Object.definedPropertyies 메서드 사용시 여려 개의 프로퍼티를 한 번에 정의 가능!]
+
+Object.definedProperties(person, {
+  // 데이터 프로퍼티 정의
+  firstName: {
+    value: '...',
+    writable: true
+    ...
+  },
+  lastName: {
+    ...
+  },
+  // 접근자 프로퍼티 정의
+  fullName: {
+    // getter 함수
+    get () {
+      return ...
+    },
+    // setter 함수
+    set(name) {
+      [this....
+    },
+    enumerable: true,
+    configurable: true
+  }
+});
+
+```
+<br>
+
+|  프로퍼티 디스크립터 객체의 프로퍼티   |  대응하는 프로퍼티 어트리뷰트  |  생략했을 때의 기본값                |
+|----------------------------------------|-------------------------------|--------------------------------------|
+| value                                  | [[Value]]                     | undefined                            |
+| get                                    | [[Get]]                       | undefined                            |
+| set                                    | [[Set]]                       | undefined                            |
+| writable                               | [[Writable]]                  | false                                |
+| enumerable                             | [[Enumerable]]                | false                                |
+| configurable                           | [[Configurable]]              | false                                |
 <br>
 
 # 객체 변경 방지
+
+```js
+🔎 Note
+
+객체는 변경 가능한 값! → 재할당 없이 직접 변경할 수 있다.
+
+"프로퍼티를 추가 & 삭제", "프로퍼티 값 갱신",
+Object.definedProperty 메서드를 사용하여 "프로퍼티 어트리뷰트를 재정의" 가능!
+
+따라서, 객체의 변경을 방지하는 다양한 메서드를 제공한다.
+이 메서드들은 객체의 변경을 "금지하는 강도"가 다르다.
+```
+<br>
+
+|  구분          |  메서드                  | 프로퍼티 추가 | 프로퍼티 삭제 | 프로퍼티 값 읽기 | 프로퍼티 값 쓰기 | 프로퍼티 어트리 뷰트 재정의 |
+|----------------|--------------------------|--------------|---------------|------------------|------------------|-----------------------------|
+|객체 확장 금지   | Object.preventExtensions | X            | O             | O                | O                | O                           |
+|객체 밀봉       | Object.seal              | X             | X             | O                | O                | X                           |
+|객체 동결       | Object.freeze            | X             | X             | O                | X                | X                           |
 <br>
 
 ## 1️⃣ 객체 확장 금지
+
+> 확장이 금지된 객체는 `프로퍼티 추가가 금지`된다.
+>> 프로퍼티 동적 추가 & Object.defineProperty 메서드 추가 전부 금지
 <br>
 
 ## 2️⃣ 객체 밀봉
+
+> 밀봉된 객체는 `읽기와 쓰기만 가능`하다.
+>> 프로퍼티 추가 및 삭제와 프로퍼티 어트리뷰트 재정의 금지
 <br>
 
 ## 3️⃣ 객체 동결
+
+> 동결된 객체는 `읽기만 가능`하다.
+>> 프로퍼티 추가 및 삭제와 프로퍼티 어트리뷰트 재정의 금지, 프로퍼티 값 갱신 금지
 <br>
 
 ## 불변 객체
