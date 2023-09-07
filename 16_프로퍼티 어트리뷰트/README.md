@@ -338,10 +338,34 @@ Object.definedProperty 메서드를 사용하여 "프로퍼티 어트리뷰트�
 >> 프로퍼티 동적 추가 & Object.defineProperty 메서드 추가 전부 금지
 <br>
 
+```js
+
+// 객체의 확장을 금지하는 메서드 : Object.preventExtensions
+Object.preventExtensions(객체명);
+
+// 확장이 가능한 객체인지 여부는 Object.isExtensible 메서드로 확인할 수 있다.
+// true → 확장 가능, flase → 확장 불가능
+Object.isExtensible(객체명);
+
+```
+<br>
+
 ## 2️⃣ 객체 밀봉
 
 > 밀봉된 객체는 `읽기와 쓰기만 가능`하다.
 >> 프로퍼티 추가 및 삭제와 프로퍼티 어트리뷰트 재정의 금지
+<br>
+
+```js
+
+// 객체를 밀봉하는 메서드 : Object.seal
+Object.seal(객체명);
+
+// 밀봉된 객체 여부 확인 메서드 : Object.isSealed
+// true → 밀봉된 객체, flase → 밀봉되지 않은 객체
+Object.isSealed(객체명);
+
+```
 <br>
 
 ## 3️⃣ 객체 동결
@@ -350,4 +374,74 @@ Object.definedProperty 메서드를 사용하여 "프로퍼티 어트리뷰트�
 >> 프로퍼티 추가 및 삭제와 프로퍼티 어트리뷰트 재정의 금지, 프로퍼티 값 갱신 금지
 <br>
 
+```js
+
+// 객체를 동결하는 메서드 : Object.freeze
+Object.freeze(객체명);
+
+// 동결된 객체 여부 확인 메서드 : Object.isFrozen
+// true → 동결된 객체, flase → 동결되지 않은 객체
+Object.isFrozen(객체명);
+
+```
+<br>
+
 ## 불변 객체
+
+> `불변 객체` : 객체를 중첩 객체까지 동결하는 방법
+>> `오로지 읽기만 가능`한 객체
+<br>
+
+- 지금까지 살펴본 `객체 변경 방지 메서드`들은 `얕은 변경 방지(shallow only)`
+  - 따라서 `직속 프로퍼티만 변경이 방지`되고 `중첩 객체까지는 영향을 주지 못한다.`
+
++ 한 번의 Object.freeze 메서드로 객체를 동결하여도, 중첩 객체까지 동결할 수 없다.
+  + 따라서, **재귀적으로 Object.freeze 메서드를 호출**해야 한다.
+<br>
+
+```js
+
+[얕은 변경 방지]
+const person = {
+  name: 'Lee',
+  address: { city: 'Seoul' }
+};
+
+// 얕은 객체 동결
+Object.freeze(person);
+
+// 중첩 객체까지 동결하지 못한다.
+console.log(Object.isFrozen(person.address)); // false
+
+
+[깊은 변경 방지]
+function deepFreeze(target) {
+  // 객체가 아니거나, 동결된 객체는 무시
+  // 동결되지 않는 객체만 동결!
+  if (target && typeof target === 'object' && !Object.isFrozen(target)) {
+    Object.freeze(target);
+
+    // Object.keys 메서드는 객체 자신의 열거 가능한 프로퍼티 키를 배열로 반환
+    // forEach 메서드는 배열을 순회하며 배열의 각 요소에 대하여 콜백 함수를 실행
+    Object.keys(target).forEach(key => deepFreeze(target[key]));
+  }
+  return target;
+}
+
+const person = {
+  name: 'Lee';
+  address: { city: 'Seoul' }
+};
+
+
+// 깊은 객체 동결
+deepFreezen(person);
+
+// 중첩 객체까지 동결
+console.log(Object.isFrozen(person.address)); // true
+
+// 프로퍼티 값 변경 시도
+person.address.city = 'Busan';
+console.log(person); // {name: "Lee", address: {city: "Seoul"}}
+
+```
